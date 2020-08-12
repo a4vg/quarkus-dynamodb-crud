@@ -17,6 +17,7 @@ aws dynamodb create-table --table-name Animals  \
 
 ### Start local API
 ```
+mvn clean package
 sam local start-api --template-file target/sam.jvm.yaml --docker-network host
 ```
 
