@@ -1,30 +1,37 @@
-# quarkus-dynamodb-crud project
+# Quarkus DynamoDB Crud Project
+Guide: https://quarkus.io/guides/amazon-dynamodb#creating-json-rest-service
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
+## Running the application
+### Setup DynamoDB locally
 ```
-./mvnw quarkus:dev
+# Start DynamoDB
+docker run --publish 8000:8000  amazon/dynamodb-local:1.11.477 -jar DynamoDBLocal.jar -inMemory -sharedDb
+
+# Create table and key
+aws dynamodb create-table --table-name Animals  \
+	--attribute-definitions AttributeName=animalName,AttributeType=S \
+	--key-schema AttributeName=animalName,KeyType=HASH \
+	--provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
+	--endpoint-url http://localhost:8000
 ```
 
-## Packaging and running the application
+### Start local API
+```
+sam local start-api --template-file target/sam.jvm.yaml --docker-network host
+```
 
-The application can be packaged using `./mvnw package`.
-It produces the `quarkus-dynamodb-crud-1.0-SNAPSHOT-runner.jar` file in the `/target` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
+## Test
+```bash
+# POST /animals: Create animal
+curl --request POST \
+  -d '{ "name": "Lion", "classification": "mammal" }' \
+  -H 'Content-Type: application/json' \
+  http://localhost:3000/animals
 
-The application is now runnable using `java -jar target/quarkus-dynamodb-crud-1.0-SNAPSHOT-runner.jar`.
+# GET /animals: Get list of animals
+curl --request GET http://localhost:3000/animals
 
-## Creating a native executable
+# POST /animals/{name}: Get animal by name 
+curl --request GET http://localhost:3000/animals/Lion
+```
 
-You can create a native executable using: `./mvnw package -Pnative`.
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
-
-You can then execute your native executable with: `./target/quarkus-dynamodb-crud-1.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image.
