@@ -1,9 +1,14 @@
 # Quarkus DynamoDB Crud Project
-Guide: https://quarkus.io/guides/amazon-dynamodb#creating-json-rest-service
+Guide: https://quarkus.io/guides/amazon-dynamodb
 
-## Running the application
-### Setup DynamoDB locally
+## Running the application in Amazon
 ```
+sam deploy
+```
+
+## Testing the application
+### Setup DynamoDB locally
+```bash
 # Start DynamoDB
 docker run --publish 8000:8000  amazon/dynamodb-local:1.11.477 -jar DynamoDBLocal.jar -inMemory -sharedDb
 
@@ -15,13 +20,26 @@ aws dynamodb create-table --table-name Animals  \
 	--endpoint-url http://localhost:8000
 ```
 
-### Start local API
+### Configure Quarkus App
+Change `application.properties` configuration. 
 ```
+quarkus.dynamodb.endpoint-override=http://localhost:8000
+
+quarkus.dynamodb.aws.region=eu-central-1
+quarkus.dynamodb.aws.credentials.type=static
+quarkus.dynamodb.aws.credentials.static-provider.access-key-id=test-key
+quarkus.dynamodb.aws.credentials.static-provider.secret-access-key=test-secret
+```
+
+### Start local API
+```bash
 mvn clean package
 sam local start-api --template-file target/sam.jvm.yaml --docker-network host
 ```
 
 ## Test
+If the application is running in Amazon, go to _[CloudFormation Stacks](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks) > quarkus-dynamodb > Outputs_ to find the API URL and replace `http://localhost:3000/`.
+
 ```bash
 # POST /animals: Create animal
 curl --request POST \
@@ -32,7 +50,7 @@ curl --request POST \
 # GET /animals: Get list of animals
 curl --request GET http://localhost:3000/animals
 
-# POST /animals/{name}: Get animal by name 
+# GET /animals/{name}: Get animal by name 
 curl --request GET http://localhost:3000/animals/Lion
 ```
 

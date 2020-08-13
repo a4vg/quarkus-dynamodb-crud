@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "quarkus-dynamodb"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1tm3s4l9upjt3"
+s3_prefix = "quarkus-dynamodb"
+region = "us-east-2"
+capabilities = "CAPABILITY_IAM"
