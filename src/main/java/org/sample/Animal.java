@@ -10,6 +10,7 @@ import java.util.Objects;
 public class Animal {
     private String name;
     private String classification;
+    private Boolean deleted;
 
     public Animal(){};
 
@@ -18,6 +19,8 @@ public class Animal {
         if (item != null && !item.isEmpty()) {
             animal.setName(item.get(AbstractService.ANIMAL_NAME_COL).s());
             animal.setClassification(item.get(AbstractService.ANIMAL_CLASS_COL).s());
+            if (item.containsKey(AbstractService.DELETED_COL))
+                animal.setDeleted(true);
         }
         return animal;
     }
@@ -37,6 +40,14 @@ public class Animal {
 
     public void setClassification(String classification) {
         this.classification = classification;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

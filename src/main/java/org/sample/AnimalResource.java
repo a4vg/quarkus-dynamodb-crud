@@ -28,7 +28,18 @@ public class AnimalResource {
 
     @POST
     public List<Animal> add(Animal animal) {
-        service.add(animal);
-        return getAll();
+        return service.add(animal);
+    }
+
+    @POST
+    @Path("{name}")
+    public List<Animal> update(@PathParam("name") String name, Animal animal) {
+        return service.update(name, animal);
+    }
+
+    @DELETE
+    @Path("{name}")
+    public List<Animal> delete(@PathParam("name") String name){
+        return service.delete(name);
     }
 }

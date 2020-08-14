@@ -25,6 +25,23 @@ public class AnimalService extends AbstractService{
     }
 
     public Animal get(String name) {
-        return Animal.from(dynamoDB.getItem(getRequest(name)).item());
+        Animal animal = Animal.from(dynamoDB.getItem(getRequest(name)).item());
+        if (!animal.getDeleted())
+            return animal;
+        return new Animal();
+    }
+
+    public List<Animal> update(String name, Animal animal) {
+        dynamoDB.updateItem(updateRequest(name, animal));
+        return findAll();
+    }
+
+    public List<Animal> delete(String name) {
+        Animal animal = Animal.from(dynamoDB.getItem(getRequest(name)).item());
+        if (animal.getName() != null){
+            animal.setDeleted(true);
+            dynamoDB.updateItem(updateRequest(name, animal));
+        }
+        return findAll();
     }
 }
