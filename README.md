@@ -41,16 +41,25 @@ sam local start-api --template-file target/sam.jvm.yaml --docker-network host
 If the application is running in Amazon, go to _[CloudFormation Stacks](https://us-east-2.console.aws.amazon.com/cloudformation/home?region=us-east-2#/stacks) > quarkus-dynamodb > Outputs_ to find the API URL and replace `http://localhost:3000/`.
 
 ```bash
-# POST /animals: Create animal
+# POST /animals: Create animal and returns list of animals.
 curl --request POST \
   -d '{ "name": "Lion", "classification": "mammal" }' \
   -H 'Content-Type: application/json' \
   http://localhost:3000/animals
 
-# GET /animals: Get list of animals
+# GET /animals: Returns list of animals.
 curl --request GET http://localhost:3000/animals
 
-# GET /animals/{name}: Get animal by name 
+# GET /animals/{name}: Returns animal by name.
 curl --request GET http://localhost:3000/animals/Lion
+
+# POST /animals/{name}: Update animal by name and returns list of animals.
+curl --request POST \
+  -d '{ "name": "Lion", "classification": "still mammal" }' \
+  -H 'Content-Type: application/json' \
+  http://localhost:3000/animals/Lion
+  
+# DELETE /animals/{name}: Delete animal by name and returns list of animals.
+curl --request DELETE http://localhost:3000/animals/Lion
 ```
 
